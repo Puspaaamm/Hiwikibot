@@ -45,6 +45,26 @@ active_tasks: Dict[int, asyncio.Task] = {}
 # Common Footer
 DEV_FOOTER = "\n\n 𝙳𝚎𝚟𝚕𝚘𝚙 𝚋𝚢 @𝚙𝚞𝚜𝚙𝚊𝚊𝚊𝚖𝚖 ❤️"
 
+import re  # Is line ko bilkul top par imports me add kar lein
+
+def clean_wiki_text(text: str) -> str:
+    if not text:
+        return ""
+
+    # Faltu Sections (References, External Links) ko hatane ke liye
+    unwanted = [
+        "== सन्दर्भ ==", "== संदर्भ ==", "== इन्हें भी देखें ==", 
+        "== टिप्पणी सूची ==", "== बाहरी कड़ियाँ ==", "== References =="
+    ]
+    for sec in unwanted:
+        if sec in text:
+            text = text.split(sec)[0]
+
+    # '=== Heading ===' ko '★ Heading' me badalna
+    text = re.sub(r'={2,}\s*(.*?)\s*={2,}', r'\n\n★ **\1**\n', text)
+    return text.strip()
+
+
 def convert_to_hindi(query: str) -> str:
     """Hinglish / English query ko Hindi (Devanagari) me convert/translate karta hai."""
     try:
@@ -81,6 +101,9 @@ def fetch_wiki_data_hindi(query: str):
     extract_text = ""
     for p_id, p in pages.items():
         extract_text = p.get("extract", "")
+        # Extract text ko clean karein
+    extract_text = clean_wiki_text(extract_text)
+
 
     # 4. Lead Image
     summary_url = f"https://hi.wikipedia.org/api/rest_v1/page/summary/{title_encoded}"
@@ -137,15 +160,8 @@ def split_text(text: str, max_length: int = MAX_MESSAGE_LENGTH):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     welcome_text = (
-        " **Welcome to Wiki Bot!** \n"
-        "━━━━━⬪━━━━━\n"
-        "Aap mujhe **Hinglish**, **Hindi**, ya **English** me kisi bhi topic ke baare me pooch sakte hain.\n\n"
-        " *Example Queries:*\n"
-        "▸ `Mahatma Gandhi` \n"
-        "▸ `Chandrayaan 3 ke baare me batao` \n"
-        "▸ `Black holes` \n"
-        "━━━━━⬪━━━━━"
-    )
+        " **𝚆𝚎𝚕𝚌𝚘𝚖𝚎 𝚝𝚘 @𝙷𝚒𝚠𝚒𝚔𝚒𝚋𝚘𝚝.𝚃𝚈𝙿𝙴 𝚈𝙾𝚄𝚁 𝚃𝙾𝙿𝙸𝙲** \n"
+    © 𝙳𝙴𝚅𝙻𝙾𝙿 𝙱𝚈 𝚝.𝚖𝚎/@𝚙𝚞𝚜𝚙𝚊𝚊𝚊𝚖𝚖 ❤️ )
     await update.message.reply_text(welcome_text, parse_mode="Markdown")
 
 
