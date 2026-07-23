@@ -60,8 +60,8 @@ def clean_wiki_text(text: str) -> str:
         if sec in text:
             text = text.split(sec)[0]
 
-    # '=== Heading ===' ko '★ Heading' me badalna
-    text = re.sub(r'={2,}\s*(.*?)\s*={2,}', r'\n\n★ **\1**\n', text)
+    # '=== Heading ===' ko '● Heading' me badalna
+    text = re.sub(r'={2,}\s*(.*?)\s*={2,}', r'\n\n● \1\n', text)
     return text.strip()
 
 
@@ -160,8 +160,8 @@ def split_text(text: str, max_length: int = MAX_MESSAGE_LENGTH):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     welcome_text = (
-        " **𝚆𝚎𝚕𝚌𝚘𝚖𝚎 𝚝𝚘 @𝙷𝚒𝚠𝚒𝚔𝚒𝚋𝚘𝚝.𝚃𝚈𝙿𝙴 𝚈𝙾𝚄𝚁 𝚃𝙾𝙿𝙸𝙲** \n"
-    """𝙳𝙴𝚅𝙻𝙾𝙿 𝙱𝚈 𝚝.𝚖𝚎/@𝚙𝚞𝚜𝚙𝚊𝚊𝚊𝚖𝚖""" 
+        " **𝚃𝚈𝙿𝙴 𝚈𝙾𝚄𝚁 𝚃𝙾𝙿𝙸𝙲...** \n"
+    """𝙳𝙴𝚅𝙻𝙾𝙿 𝙱𝚈 𝙿𝚞𝚜𝚙𝚊𝚊𝚊𝚖𝚖""" 
     )
     await update.message.reply_text(welcome_text, parse_mode="Markdown")
 
@@ -225,7 +225,7 @@ async def process_search(update: Update, query: str) -> None:
                     continue
 
         # Step 4: Footer & Web Link
-        footer_text = f"━━━━━━━━━━\n🔗 **[Click Here to Read Full Article on Wikipedia]({data['url']})**" + DEV_FOOTER
+        footer_text = f"𝚂𝚘𝚞𝚛𝚌𝚎\n **[𝙷𝚒.𝚆𝚒𝚔𝚒𝚙𝚎𝚍𝚒𝚊.𝚘𝚛𝚐]({data['url']})**" + DEV_FOOTER
         await update.message.reply_text(footer_text, parse_mode="Markdown")
 
     except asyncio.CancelledError:
