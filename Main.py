@@ -42,6 +42,8 @@ HEADERS = {"User-Agent": "TelegramHinglishWikipediaBot/3.0 (personal project)"}
 MAX_MESSAGE_LENGTH = 3800
 active_tasks: Dict[int, asyncio.Task] = {}
 
+# Common Footer
+DEV_FOOTER = "\n\n 𝙳𝚎𝚟𝚕𝚘𝚙 𝚋𝚢 @𝚙𝚞𝚜𝚙𝚊𝚊𝚊𝚖𝚖 ❤️"
 
 def convert_to_hindi(query: str) -> str:
     """Hinglish / English query ko Hindi (Devanagari) me convert/translate karta hai."""
@@ -135,10 +137,10 @@ def split_text(text: str, max_length: int = MAX_MESSAGE_LENGTH):
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE) -> None:
     welcome_text = (
-        "✨ **Welcome to Wiki Bot!** ✨\n"
+        " **Welcome to Wiki Bot!** \n"
         "━━━━━⬪━━━━━\n"
         "Aap mujhe **Hinglish**, **Hindi**, ya **English** me kisi bhi topic ke baare me pooch sakte hain.\n\n"
-        "💡 *Example Queries:*\n"
+        " *Example Queries:*\n"
         "▸ `Mahatma Gandhi` \n"
         "▸ `Chandrayaan 3 ke baare me batao` \n"
         "▸ `Black holes` \n"
@@ -166,14 +168,14 @@ async def process_search(update: Update, query: str) -> None:
         
         data = await asyncio.to_thread(fetch_wiki_data_hindi, query)
         if not data or not data["extract"]:
-            await update.message.reply_text(f'❌ "{query}" ke liye koi article nahi mila. Kripya koi aur keyword try karein.')
+            await update.message.reply_text(f'❌ "{query}" unavilable ')
             return
 
         title = data["title"]
         desc = f"_\n▸ {data['description']}_" if data['description'] else ""
 
         # Step 1: Main Photo & Title Alignment
-        header_text = f"📖 **{title.upper()}**{desc}\n━━━━━⬪━━━━━"
+        header_text = f"📖 **{title.upper()}**{desc}\n●----------------●"
 
         if data["lead_image"]:
             try:
@@ -197,7 +199,7 @@ async def process_search(update: Update, query: str) -> None:
 
         # Step 3: Extra Images & Diagrams
         if data["images"]:
-            await update.message.reply_text("🖼️ **RELATED DIAGRAMS & IMAGES:**\n━━━━━⬪━━━━━", parse_mode="Markdown")
+            await update.message.reply_text(" **RELATED DIAGRAMS & IMAGES:**\n━━━━━━━━━━", parse_mode="Markdown")
             for img_url, caption in data["images"]:
                 try:
                     await update.message.reply_photo(photo=img_url, caption=f"📷 _{caption[:100]}_", parse_mode="Markdown")
@@ -206,14 +208,14 @@ async def process_search(update: Update, query: str) -> None:
                     continue
 
         # Step 4: Footer & Web Link
-        footer_text = f"━━━━━⬪━━━━━\n🔗 **[Click Here to Read Full Article on Wikipedia]({data['url']})**"
+        footer_text = f"━━━━━━━━━━\n🔗 **[Click Here to Read Full Article on Wikipedia]({data['url']})**" + DEV_FOOTER
         await update.message.reply_text(footer_text, parse_mode="Markdown")
 
     except asyncio.CancelledError:
         raise
     except Exception as e:
         logger.error(f"Error: {e}")
-        await update.message.reply_text("⚠️ Request process karne me koi dikkat hui. Dobara koshish karein.")
+        await update.message.reply_text("Sorry")
 
 
 def main() -> None:
